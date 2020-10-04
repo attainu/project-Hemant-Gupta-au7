@@ -5,10 +5,14 @@ import Signin from "./components/screens/SignIn";
 import Profile from "./components/screens/Profile";
 import Signup from "./components/screens/Signup"; 
 import UserProfile from "./components/screens/UserProfile";
+import ScrapRequest1 from './components/screens/ScrapRequest'
+import AdminData from './components/Admin/admin_Data'
+import ScrapStatus from './components/screens/ScrapData'
 import { BrowserRouter, Switch, Route, Link,useHistory } from "react-router-dom";
 import CretePost from "./components/screens/CreatePost";
 import { reducer, initialState } from './reducers/userReducer'
 import "./App.css";
+import ScrapRequest from './components/screens/ScrapRequest';
 
 
 //Creating context
@@ -51,6 +55,15 @@ var Routing = () => {
       </Route>
       <Route exact path="/profile/:userid">
         <UserProfile />
+      </Route>
+      <Route exact path="/scrapRequest">
+        <ScrapRequest1 />
+      </Route>
+      <Route exact path="/adminData">
+        <AdminData />
+      </Route>
+      <Route exact path="/ScrapDetails">
+        <ScrapStatus />
       </Route>
     </Switch>
   );

@@ -60,7 +60,7 @@ route.put("/follow",requireLogin, (req, res) => {
 
 
 //UNFOLLOW
-route.put("/unfollow", (req, res) => {
+route.put("/unfollow",requireLogin, (req, res) => {
     User.findByIdAndUpdate(
       req.body.unfollowId,
       {
@@ -87,5 +87,22 @@ route.put("/unfollow", (req, res) => {
       }
     );
   });
+
+
+  //UPDATE_PIC
+
+  route.put("/updatepic",requireLogin,(req,res)=>
+  {
+    User.findByIdAndUpdate(req.user._id,{$set:{pic:req.body.pic}},{new:true}
+      ,(err,result)=>
+    {
+     
+      if (err)
+      {
+        return res.status(422).json({error:"PIC CANOT POST"})
+      }
+      res.json(result)
+    })
+  })
 
 module.exports = route;

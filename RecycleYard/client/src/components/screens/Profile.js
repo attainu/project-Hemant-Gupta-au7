@@ -1,8 +1,11 @@
 import React, { Component,useEffect,useState,useContext } from "react";
 import {UserContext} from '../../App'
+
 const Profile = () => {
   var [mypics,setPics]=useState([])
   var {state,dispatch}=useContext(UserContext)
+  var [image, setImage] = useState("");
+  var [url, setURL] = useState(undefined);
   useEffect(()=>
   {
 fetch('/mypost',{
@@ -13,8 +16,60 @@ fetch('/mypost',{
 .then((result)=>{console.log("PROFILE",result)
 setPics(result.mypost)})
   },[])
+
+ useEffect(()=>
+ {
+   if(image)
+   {
+    const data = new FormData();
+    data.append("file", image);
+    data.append("upload_preset", "insta-clone");
+    data.append("cloud_name", "djztjkizu");
+    fetch("	https://api.cloudinary.com/v1_1/djztjkizu/image/upload", {
+      method: "POST",
+      body: data,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log(data)
+       // setURL(data.url);
+        // localStorage.setItem("user",JSON.stringify({...state,pic:data.url}))
+        // dispatch({type:"UPDATEPIC",payload:data.url})
+        fetch('/updatepic',{
+          method:"put",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("jwt"),
+          },
+          body:JSON.stringify({
+            pic:data.url
+          })
+ 
+        }).then((res)=>res.json())
+        .then((result)=>
+        {
+          console.log("PHOTO",result)
+         localStorage.setItem("user",JSON.stringify({...state,pic:result.pic}))
+        dispatch({type:"UPDATEPIC",payload:result.pic})
+        })
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+   }
+
+ },[image])
+ 
+  //UPDATE_PHOTO
+  var updatePhoto=(file)=>
+  {
+    setImage(file)
+  
+  }
+
   return (
-    <div style={{maxWidth:"550px",margin:"0px auto"}}>
+    <div style={{maxWidth:"550px",margin:"0px auto"}}>  
       <div
         style={{
           display: "flex",
@@ -28,9 +83,20 @@ setPics(result.mypost)})
             style={{ width: "160px", height: "160px", borderRadius: "80px" }}
             src={state ? state.pic : "Loading..."}
           />
+        
+        <div className="file-field input-field">
+          <div className="btn #64b5f6 blue lighten-2">
+            <span>Upload Pic</span>
+            <input type="file" onChange={(e) => updatePhoto(e.target.files[0])} />
+          </div>
+          <div className="file-path-wrapper">
+            <input className="file-path validate" type="text" />
+          </div>
+        </div>
         </div>
         <div>
           <h4>{state?state.name:"loading"}</h4>
+          <h4>{state?state.email:"loading"}</h4>
           <div
             style={{
               display: "flex",
